@@ -1,0 +1,169 @@
+// Landing Page
+
+.landing-background {
+   background-image: url("../img/background-landing.jpg");
+   background-size: cover;
+   background-repeat: no-repeat;
+   min-height: 100vh;
+}
+
+.landing-card {
+   color: $black;
+   font-family: $font-family-serif;
+   padding: map-get($spacers, 0);
+}
+
+.signup-text {
+   color: $success;
+   font-size: $font-size-base;
+   font-family: $font-family-base;
+}
+
+.logo-text {
+   color: $white;
+   font-family: $font-family-brand;
+   font-weight: $font-weight-normal;
+   font-size: $h1-font-size;
+}
+
+.btn-landing {
+   font-family: $font-family-base;
+}
+
+.input-text {
+   color: $gray-400;
+   font-family: $font-family-base;
+   font-size: $font-size-base * 1.25;
+   font-weight: $font-weight-normal;
+}
+
+.card-text {
+   font-size: $font-size-base;
+   font-family: $font-family-base;
+}
+
+.hide-me[aria-expanded="true"] {
+   display: none;
+}
+
+.alert {
+   font-family: $font-family-base;
+   font-size: $font-size-base;
+   font-weight: $font-weight-normal;
+}
+// HEADER RESIZING
+.header {
+   margin-left: 2;
+}
+.header h1 {
+   margin-left: 5;
+}
+@media (max-width: 465px) {
+   .header {
+      justify-content: center;
+   }
+   .header h1 {
+      font-size: 45px;
+   }
+   .header img {
+      width: 135px;
+      margin-left: 1;
+      margin-top: -6;
+   }
+}
+@media (max-width: 365px) {
+   .header {
+      justify-content: center;
+   }
+   .header h1 {
+      font-size: 43px;
+   }
+   .header img {
+      width: 110px;
+      margin-left: 1;
+      margin-top: -6;
+   }
+}
+
+// Card Pages
+
+.btn-link {
+   padding-left: 0;
+   padding-right: 0;
+   border: 0;
+   font-weight: $font-weight-bold;
+}
+
+.btn-secondary {
+   font-weight: $font-weight-normal;
+}
+
+.text-brand {
+   font-family: $font-family-brand;
+}
+
+.tab-separator {
+   border-left: 1px $gray-800 solid;
+}
+
+.tab-active {
+   background-color: $gray-800;
+}
+
+.card {
+   border: 0;
+}
+
+.card-body {
+   color: $white;
+   font-family: $font-family-serif;
+   font-size: $font-size-base * 1.25;
+}
+
+.card.bg-primary {
+   border-bottom-left-radius: 0;
+   border-bottom-right-radius: 0;
+}
+
+.card.bg-secondary {
+   border-top-left-radius: 0;
+   border-top-right-radius: 0;
+}
+
+.all-card-body-text {
+   color: $white;
+   font-family: $font-family-serif;
+   font-size: $font-size-base;
+}
+
+textarea {
+   width: 100%;
+   background-color: transparent;
+
+   /* https://stackoverflow.com/a/30899549 */
+   border: none;
+   overflow: auto;
+   outline: none;
+   -webkit-box-shadow: none;
+   -moz-box-shadow: none;
+   box-shadow: none;
+   resize: none;
+}
+
+.card textarea {
+   color: $white;
+}
+
+.bg-success,
+.bg-danger p.lead {
+   color: $white;
+}
+
+.delete-verify {
+   cursor: pointer;
+}
+
+.disabled {
+   pointer-events: fill !important;
+   cursor: not-allowed;
+}
