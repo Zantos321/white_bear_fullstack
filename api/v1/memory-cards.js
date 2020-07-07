@@ -9,10 +9,19 @@ const selectAllCards = require("../../queries/selectAllCards");
 // @access      Public
 router.get("/", (req, res) => {
    console.log(req.query);
-   const { userId, searchTerm } = req.query;
-   db.query(
-      selectAllCards(userId, searchTerm, "`memory_cards`.`created_at` DESC")
-   )
+   const { userId, searchTerm, order } = req.query;
+   let constructedSearchTerm;
+   if (searchTerm === "" || searchTerm === undefined) {
+      constructedSearchTerm = "%%";
+   } else {
+      constructedSearchTerm = `%${searchTerm}%`;
+   }
+   db.query(selectAllCards, [
+      userId,
+      constructedSearchTerm,
+      constructedSearchTerm,
+      order,
+   ])
       .then((dbRes) => {
          res.json(dbRes);
       })
