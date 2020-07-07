@@ -7,5 +7,19 @@
       "dotenv": "^8.2.0",
       "express": "^4.17.1",
       "mysql": "^2.18.1"
-   }
+   },
+   "scripts": {
+      "start": "nodemon server.js"
+   },
+   "devDependencies": {},
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/Zantos321/white_bear_fullstack.git"
+   },
+   "author": "",
+   "bugs": {
+      "url": "https://github.com/Zantos321/white_bear_fullstack/issues"
+   },
+   "homepage": "https://github.com/Zantos321/white_bear_fullstack#readme",
+   "description": ""
 }
