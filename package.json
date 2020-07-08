@@ -10,10 +10,11 @@
       "mysql": "^2.18.1"
    },
    "scripts": {
-      "start": "concurrently \"npm run server\" \"npm run client \" ",
+      "start": "node server.js",
       "client": "npm start --prefix client",
       "server": "nodemon server.js",
-      "heroku-postbuild": "npm install --prefix client && npm run build --prefix client"
+      "heroku-postbuild": "npm install --prefix client && npm run build --prefix client",
+      "dev": "concurrently \"npm run server\" \"npm run client \""
    },
    "devDependencies": {},
    "repository": {
