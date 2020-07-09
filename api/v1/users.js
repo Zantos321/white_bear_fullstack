@@ -24,10 +24,9 @@ router.get("/", (req, res) => {
 // @route       POST api/v1/users
 // @desc        Create a new user
 // @access      Public
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
    const user = req.body;
-   const newPassword = toHash(user.password);
-   user.password = newPassword;
+   user.password = await toHash(user.password);
    console.log(user);
 });
 
