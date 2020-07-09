@@ -2,6 +2,9 @@ const express = require("express");
 const app = express();
 const path = require("path");
 
+// Use to parse the body of objects
+app.use(express.json());
+
 app.use("/api/v1/users", require("./api/v1/users"));
 app.use("/api/v1/memory-cards", require("./api/v1/memory-cards"));
 
@@ -15,5 +18,3 @@ const port = process.env.PORT || 7777;
 app.listen(port, () =>
    console.log(`Server running at http://localhost:${port}`)
 );
-
-// comments so i can deploy to heroku
