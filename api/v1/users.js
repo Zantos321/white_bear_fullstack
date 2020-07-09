@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../../db");
 const selectUser = require("../../queries/selectUser");
+const insertUser = require("../../queries/insertUser");
 const { toJson, toSafeParse, toHash } = require("../../utils/helpers");
 
 // @route       GET api/v1/users
@@ -25,9 +26,22 @@ router.get("/", (req, res) => {
 // @desc        Create a new user
 // @access      Public
 router.post("/", async (req, res) => {
-   const user = req.body;
-   user.password = await toHash(user.password);
-   console.log(user);
+   const user = {
+      id: req.body.id,
+      email: req.body.email,
+      password: await toHash(req.body.password),
+      created_at: req.body.createdAt,
+   };
+
+   db.query(insertUser, user)
+      .then((dbRes) => {
+         // return the user data so we can put in redux store
+         console.log(dbRes);
+      })
+      .catch((err) => {
+         console.log(err);
+         // return a 400 error to user
+      });
 });
 
 module.exports = router;
