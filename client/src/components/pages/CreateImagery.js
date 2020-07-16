@@ -4,8 +4,11 @@ import AppTemplate from "../ui/AppTemplate";
 import { Link } from "react-router-dom";
 import classnames from "classnames";
 import { checkIsOver, MAX_CARD_CHARS } from "../../utils/helpers";
+import { connect } from "react-redux";
+import actions from "../../store/actions";
+import axios from "axios";
 
-export default class CreateImagery extends React.Component {
+class CreateImagery extends React.Component {
    constructor(props) {
       super(props);
       this.state = {
@@ -26,6 +29,57 @@ export default class CreateImagery extends React.Component {
 
    setImageryText(e) {
       this.setState({ imageryText: e.target.value });
+   }
+
+   async updateCreatableCard() {
+      if (!this.checkHasInvalidCharCount()) {
+         console.log("updating creatable card");
+         const {
+            id,
+            answer,
+            userId,
+            createdAt,
+            nextAttemptAt,
+            lastAttemptAt,
+            totalSuccessfulAttempts,
+            level,
+         } = this.props.creatableCard;
+         await this.props.dispatch({
+            type: actions.UPDATE_CREATABLE_CARD,
+            payload: {
+               // the card itself
+               id,
+               imagery: this.state.imageryText,
+               answer,
+               userId,
+               createdAt,
+               nextAttemptAt,
+               lastAttemptAt,
+               totalSuccessfulAttempts,
+               level,
+            },
+         });
+         // save to the database (make an API call)
+         axios
+            .post("/api/v1/memory-cards", this.props.creatableCard)
+            .then((res) => {
+               console.log("Memory Card Created");
+               // TODO: Display success overlay
+               // Clear createableCard from redux
+               this.props.dispatch({
+                  type: actions.UPDATE_CREATABLE_CARD,
+                  payload: {},
+               });
+               // route to "/create-answer"
+               this.props.history.push("/create-answer");
+            })
+            .catch((err) => {
+               const { data } = err.response;
+               console.log(data);
+               // Display error overlay
+               // Hide error overlay for 5 seconds
+            });
+      }
    }
 
    render() {
@@ -49,11 +103,7 @@ export default class CreateImagery extends React.Component {
 
                <div className="card bg-secondary">
                   <div className="card-body">
-                     One morning, when Gregor Samsa woke from troubled dreams,
-                     he found himself transformed in his bed into a horrible
-                     vermin. He lay on his armour-like back, and if he lifted
-                     his head a little he could see his brown belly, slightly
-                     domed and divided by arches into stiff sections.
+                     {this.props.creatableCard.answer}
                   </div>
                </div>
             </div>
@@ -75,13 +125,14 @@ export default class CreateImagery extends React.Component {
             <Link to="/create-answer" className="btn btn-link" id="save-error">
                Back to answer
             </Link>
-            <Link
-               to="/review-imagery"
+            <button
                className={classnames(
                   "btn btn-primary btn-lg float-right mb-4",
                   { disabled: this.checkHasInvalidCharCount() }
                )}
-               id="save-imagery"
+               onClick={() => {
+                  this.updateCreatableCard();
+               }}
             >
                <img
                   src={saveIcon}
@@ -91,8 +142,14 @@ export default class CreateImagery extends React.Component {
                   alt=""
                />
                Save
-            </Link>
+            </button>
          </AppTemplate>
       );
    }
 }
+
+function mapStateToProps(state) {
+   return { creatableCard: state.creatableCard };
+}
+
+export default connect(mapStateToProps)(CreateImagery);
