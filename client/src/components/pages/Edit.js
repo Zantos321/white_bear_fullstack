@@ -65,7 +65,7 @@ class Edit extends React.Component {
       const cards = this.props.queue.cards;
       const filteredCards = without(cards, deletedCard);
       this.props.dispatch({
-         type: actions.STORE_QUEUED_CARDS,
+         type: actions.UPDATE_QUEUED_CARDS,
          payload: filteredCards,
       });
       if (filteredCards[this.props.queue.index] === undefined) {

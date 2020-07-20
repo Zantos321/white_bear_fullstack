@@ -80,16 +80,16 @@ router.post("/auth", async (req, res) => {
             };
             const accessToken = jwt.sign(user, process.env.JWT_ACCESS_SECRET);
             // TODO add refresh token
-            res.status(200).json(accessToken);
+            return res.status(200).json(accessToken);
          })
          .catch((err) => {
             console.log(err);
             dbError = `${err.code} ${err.sqlMessage}`;
-            res.status(400).json({ dbError });
+            return res.status(400).json({ dbError });
          });
    } else {
       // return a 400 status to the client
-      res.status(400).json({ emailError, passwordError });
+      return res.status(400).json({ emailError, passwordError });
    }
 });
 
