@@ -1,7 +1,6 @@
 import React from "react";
 import saveIcon from "../../icons/save.svg";
 import { Link } from "react-router-dom";
-import memoryCards from "../../mock-data/memory-cards";
 import toDisplayDate from "date-fns/format";
 import AppTemplate from "../ui/AppTemplate";
 import classnames from "classnames";
@@ -10,15 +9,14 @@ import { checkIsOver, MAX_CARD_CHARS } from "../../utils/helpers";
 import isEmpty from "lodash/isEmpty";
 import without from "lodash/without";
 import actions from "../../store/actions";
-
-const memoryCard = memoryCards[2];
+import axios from "axios";
 
 class Edit extends React.Component {
    constructor(props) {
       super(props);
       this.state = {
-         answerText: memoryCard.answer,
-         imageryText: memoryCard.imagery,
+         answerText: this.props.editableCard.card.answer,
+         imageryText: this.props.editableCard.card.imagery,
          checked: false,
       };
    }
@@ -50,29 +48,69 @@ class Edit extends React.Component {
       });
    }
 
-   deleteCard() {
-      // TODO delete from database
-      if (this.props.editableCard.prevRoute === "/review-answer") {
-         this.deleteCardFromStore();
-      }
-      if (this.props.editableCard.prevRoute === "/all-cards") {
-         this.props.history.push("/all-cards");
+   saveCard() {
+      if (!this.checkHasInvalidCharCount()) {
+         const memoryCard = { ...this.props.editableCard.card };
+         memoryCard.answer = this.state.answerText;
+         memoryCard.imagery = this.state.imageryText;
+
+         // db PUT this card in our axios req
+         axios
+            .put(`/api/v1/memory-cards/${memoryCard.id}`, memoryCard)
+            .then((res) => {
+               console.log("Memory Card Updated");
+
+               const cards = [...this.props.queue.cards];
+               cards[this.props.queue.index] = memoryCard;
+
+               // update redux queue
+               this.props.dispatch({
+                  type: actions.UPDATE_QUEUED_CARDS,
+                  payload: cards,
+               });
+               // TODO: Display success overlay
+               // on success:
+               this.props.history.push(this.props.editableCard.prevRoute);
+            })
+            .catch((err) => {
+               const { data } = err.response;
+               console.log(data);
+               // Display error overlay
+               // Hide error overlay for 5 seconds
+            });
       }
    }
 
-   deleteCardFromStore() {
-      const deletedCard = this.props.editableCard.card;
-      const cards = this.props.queue.cards;
-      const filteredCards = without(cards, deletedCard);
-      this.props.dispatch({
-         type: actions.UPDATE_QUEUED_CARDS,
-         payload: filteredCards,
-      });
-      if (filteredCards[this.props.queue.index] === undefined) {
-         this.props.history.push("/review-empty");
-      } else {
-         this.props.history.push("/review-imagery");
-      }
+   deleteCard() {
+      const memoryCard = { ...this.props.editableCard.card };
+      // query database to delete card
+      axios
+         .delete(`/api/v1/memory-cards/${memoryCard.id}`)
+         .then((res) => {
+            console.log(res.data);
+            const deletedCard = this.props.editableCard.card;
+            const cards = this.props.queue.cards;
+            const filteredCards = without(cards, deletedCard);
+            this.props.dispatch({
+               type: actions.UPDATE_QUEUED_CARDS,
+               payload: filteredCards,
+            });
+            //TODO: Display success overlay
+            if (this.props.editableCard.prevRoute === "/review-answer") {
+               if (filteredCards[this.props.queue.index] === undefined) {
+                  this.props.history.push("/review-empty");
+               } else {
+                  this.props.history.push("/review-imagery");
+               }
+            }
+            if (this.props.editableCard.prevRoute === "/all-cards") {
+               this.props.history.push("/all-cards");
+            }
+         })
+         .catch((err) => {
+            console.log(err.response.data);
+            // TODO: Display error overlay
+         });
    }
 
    render() {
@@ -143,14 +181,14 @@ class Edit extends React.Component {
                   >
                      Discard changes
                   </Link>
-                  <Link
-                     to={this.props.editableCard.prevRoute}
+                  <button
                      className={classnames(
                         "btn btn-primary btn-lg float-right",
                         {
                            disabled: this.checkHasInvalidCharCount(),
                         }
                      )}
+                     onClick={() => this.saveCard()}
                   >
                      <img
                         src={saveIcon}
@@ -160,7 +198,7 @@ class Edit extends React.Component {
                         alt=""
                      />
                      Save
-                  </Link>
+                  </button>
                   <div className="text-center text-muted my-6">
                      <h4>Card properties</h4>
                   </div>
@@ -263,14 +301,3 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps)(Edit);
-/*
-
-editableCard: {
-      prevRoute: "",
-      card: {
-         // all the card properties
-      }
-}
-
-
-*/

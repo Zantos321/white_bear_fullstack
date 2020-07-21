@@ -22,9 +22,7 @@ class CreateImagery extends React.Component {
          this.state.imageryText.length === 0
       ) {
          return true;
-      } else {
-         return false;
-      }
+      } else return false;
    }
 
    setImageryText(e) {
